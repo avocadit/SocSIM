@@ -28,8 +28,8 @@ class OFC(common.Simulation):
 
         """
         #increasing all values by the amount needed by the site with highest value to reach the critical_value
-        location_of_max = np.unravel_index(np.argmax(self.values, axis=None), self.values.shape)
-        self.values += self.critical_value - self.values[location_of_max]
+        #location_of_max = np.unravel_index(np.argmax(self.values, axis=None), self.values.shape)
+        self.values += self.critical_value - np.max(self.values)
         
     def topple(self) -> bool:
         """
@@ -68,13 +68,14 @@ def topple(values: np.ndarray, visited: np.ndarray, critical_value: float, conse
     """
 
     # find a boolean array of active (overloaded) sites
+    print('np.max(values) before active_sites:',np.max(values))
     active_sites = common.clean_boundary_inplace(values >= critical_value, boundary_size)
-
+    print('active_sites.any:',active_sites.any())
     if active_sites.any():
         indices = np.vstack(np.where(active_sites)).T
         # a Nx2 array of integer indices for overloaded sites
         N = indices.shape[0]
-
+        print('np.max(values) before the loop:',np.max(values))
         for i in range(N):
             x, y = index = indices[i]
 
@@ -93,7 +94,7 @@ def topple(values: np.ndarray, visited: np.ndarray, critical_value: float, conse
                 visited[xn, yn] = True
             
             values[x, y] = 0.
-    
+        print('np.max(values) after the loop:',np.max(values))
         return True
     else:
         return False # nothing happened, we can stop toppling

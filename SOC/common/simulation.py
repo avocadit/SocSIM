@@ -86,6 +86,7 @@ class Simulation:
         data_acquisition = {}
         for i in tqdm.trange(N_iterations):
             self.drive()
+            print('N_iterations:',i)
             observables = self.AvalancheLoop()
             data_acquisition[i] = observables
         return data_acquisition
